@@ -7,6 +7,7 @@
     <authors>s.gnatonski</authors>
     <owners>$author$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/sgnatonski/Slavapp.Extension.EF</projectUrl>
     <description>Extensions for EF and IQueryable interface to allow simple sorting and filtering</description>
     <releaseNotes>Initial release.</releaseNotes>
     <copyright>Copyright 2018</copyright>
