@@ -85,7 +85,31 @@ public IHttpActionResult GetRegistrations(string sortCols = null, string filter 
     return regs;
 }
 ```
-  
+
+Example query strings:
+```
+?sortCols=FullName:asc&filter=null
+?sortCols=JobCity:asc&filter=FullName:~foo
+```
+
+By default following set of symbols will be used to parse the query string:
+
+- StartsWith = "^"
+- Equal = "*"
+- GreaterThan = ">"
+- LesserThan = "<"
+ -NotEqual = "!"
+- Contains = "~"
+- SortAscending = "asc"
+- ColumnSeparator = "|"
+- ValueSeparator = ":"
+
+They can be defined differently by implementing ISymbols interface and by registering them by calling 
+```
+SetSymbols(new OtherSymbols())
+```
+in BaseFilter or BaseSorting inherited classes, whenever they need to be used.
+
 ## Authors
 
 Slawomir Gnatonski
