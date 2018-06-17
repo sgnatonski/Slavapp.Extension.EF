@@ -110,6 +110,15 @@ SetSymbols(new OtherSymbols())
 ```
 in BaseFilter or BaseSorting inherited classes, whenever they need to be used.
 
+### Dependency injection
+
+All Filters and sorting classes need to be registered in DI container before they can be used. All that's needed is IServiceProvider instance and:
+
+```
+container.RegisterSort<Registration, RegistrationSorting>();
+container.RegisterFilter<Registration, RegistrationFilter>();
+```
+
 ## Authors
 
 Slawomir Gnatonski
