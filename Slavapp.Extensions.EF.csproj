@@ -44,12 +44,14 @@
     <Compile Include="FactoryCache.cs" />
     <Compile Include="Filtering\BaseFilter.cs" />
     <Compile Include="Filtering\FilterCommand.cs" />
+    <Compile Include="Filtering\FilterParser.cs" />
     <Compile Include="Filtering\IBaseFilter.cs" />
     <Compile Include="ISymbols.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sorting\BaseSorting.cs" />
     <Compile Include="Sorting\IBaseSorting.cs" />
     <Compile Include="Sorting\SortCommand.cs" />
+    <Compile Include="Sorting\SortingParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
