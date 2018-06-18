@@ -7,7 +7,7 @@
         public FilterOperation Operation { get; set; }
     }
 
-    public enum FilterOperation 
+    internal enum FilterOperation 
     {
         StartsWith,
         Equal,
