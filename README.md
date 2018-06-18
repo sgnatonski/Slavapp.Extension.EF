@@ -122,3 +122,7 @@ container.RegisterFilter<Registration, RegistrationFilter>();
 ## Authors
 
 Slawomir Gnatonski
+
+## Licence
+
+This project is licensed under the terms of the MIT license.
