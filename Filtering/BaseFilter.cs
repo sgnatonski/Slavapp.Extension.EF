@@ -10,39 +10,51 @@ namespace Slavapp.Extensions.EF.Filtering
         private Hashtable expressions = new Hashtable();
         private ISymbols symbols = new DefaultSymbols();
 
+        private Expression GetConvertedParam<T>(string val)
+        {
+            return Expression.Constant((T)Convert.ChangeType(val, typeof(T)));
+        }
+
         private Expression<Func<T, bool>> GetPredicate<T, TType>(Expression<Func<T, TType>> expr, FilterCommand command)
         {
-            var argParam = expr.Parameters[0];
-            var val1 = Expression.Constant(Convert.ChangeType(command.Filter, typeof(TType)));
-
-            Expression e1 = null;
-            switch (command.Operation)
+            Expression expression = null;
+            try
             {
-               case FilterOperation.Equal:
-                    e1 = Expression.Equal(expr.Body, val1);
-                    break;
-                case FilterOperation.NotEqual:
-                    e1 = Expression.NotEqual(expr.Body, val1);
-                    break;
-                case FilterOperation.GreaterThan:
-                    e1 = Expression.GreaterThan(expr.Body, val1);
-                    break;
-                case FilterOperation.LesserThan:
-                    e1 = Expression.LessThan(expr.Body, val1);
-                    break;
-                case FilterOperation.StartsWith:
-                    e1 = Expression.Call(expr.Body, typeof(TType).GetMethod("ToString", new Type[] { }));
-                    e1 = Expression.Call(e1, typeof(string).GetMethod("ToLower", new Type[] { }));
-                    e1 = Expression.Call(e1, typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) }), Expression.Constant(command.Filter.ToLower()));
-                    break;
-                case FilterOperation.Contains:
-                    e1 = Expression.Call(expr.Body, typeof(TType).GetMethod("ToString", new Type[] { }));
-                    e1 = Expression.Call(e1, typeof(string).GetMethod("ToLower", new Type[] { }));
-                    e1 = Expression.Call(e1, typeof(string).GetMethod("Contains", new Type[] { typeof(string) }), Expression.Constant(command.Filter.ToLower()));
-                    break;
+                switch (command.Operation)
+                {
+                    case FilterOperation.Equal:
+                        expression = Expression.Equal(expr.Body, GetConvertedParam<TType>(command.Filter));
+                        break;
+                    case FilterOperation.NotEqual:
+                        expression = Expression.NotEqual(expr.Body, GetConvertedParam<TType>(command.Filter));
+                        break;
+                    case FilterOperation.GreaterThan:
+                        expression = Expression.GreaterThan(expr.Body, GetConvertedParam<TType>(command.Filter));
+                        break;
+                    case FilterOperation.LesserThan:
+                        expression = Expression.LessThan(expr.Body, GetConvertedParam<TType>(command.Filter));
+                        break;
+                    case FilterOperation.StartsWith:
+                        expression = Expression.Call(expr.Body, typeof(TType).GetMethod("ToString", new Type[] { }));
+                        expression = Expression.Call(expression, typeof(string).GetMethod("ToLower", new Type[] { }));
+                        expression = Expression.Call(expression, typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) }), Expression.Constant(command.Filter.ToLower()));
+                        break;
+                    case FilterOperation.Contains:
+                        expression = Expression.Call(expr.Body, typeof(TType).GetMethod("ToString", new Type[] { }));
+                        expression = Expression.Call(expression, typeof(string).GetMethod("ToLower", new Type[] { }));
+                        expression = Expression.Call(expression, typeof(string).GetMethod("Contains", new Type[] { typeof(string) }), Expression.Constant(command.Filter.ToLower()));
+                        break;
+                }
             }
-
-            var lambda = Expression.Lambda<Func<T, bool>>(e1, argParam);
+            catch (FormatException)
+            {
+                expression = Expression.Call(expr.Body, typeof(TType).GetMethod("ToString", new Type[] { }));
+                expression = Expression.Call(expression, typeof(string).GetMethod("ToLower", new Type[] { }));
+                expression = Expression.Call(expression, typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) }), Expression.Constant(command.Filter.ToLower()));
+            }
+            
+            var argParam = expr.Parameters[0];
+            var lambda = Expression.Lambda<Func<T, bool>>(expression, argParam);
             return lambda;
         }
 
