@@ -2,6 +2,7 @@
 using Slavapp.Extensions.EF.Sorting;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Slavapp.Extensions.EF
 {
@@ -16,7 +17,7 @@ namespace Slavapp.Extensions.EF
         {
             FactoryCache.RegisterFilter<TModel, TFilter>(serviceProvider);
         }
-        
+
         public static IQueryable<T> WithSort<T>(this IQueryable<T> source, string sort)
         {
             return FactoryCache.GetSort<T>().Sort(source, sort);
@@ -27,13 +28,10 @@ namespace Slavapp.Extensions.EF
             return FactoryCache.GetFilter<T>().Filter(source, filter);
         }
 
-        public static IQueryable<T> WithPaging<T>(this IQueryable<T> source, Func<dynamic> param) where T : class
+        public static IQueryable<T> WithPaging<T>(this IQueryable<T> source, int start, int count)
         {
-            var input = param();
-            var start = input.start != null ? int.Parse((string)input.start) : (int?)null;
-            var count = input.count != null ? int.Parse((string)input.count) : (int?)null;
-            var query = start.HasValue ? source.Skip(start.Value) : source;
-            return count.HasValue ? query.Take(count.Value) : query;
+            var query = start > 0 ? source.Skip(start) : source;
+            return count > 0 ? query.Take(count) : query;
         }
     }
 }
